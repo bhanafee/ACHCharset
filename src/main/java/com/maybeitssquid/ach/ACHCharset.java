@@ -2,9 +2,15 @@ package com.maybeitssquid.ach;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.*;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
 import java.util.Arrays;
 
+/**
+ * Character set that allows only the ACH-safe subset of US-ASCII.
+ */
 public class ACHCharset extends Charset {
 
     private static final char ILLEGAL = '\0';
@@ -23,9 +29,10 @@ public class ACHCharset extends Charset {
     }
 
     /**
-     * @param cs The given charset
+     * {@inheritDoc}
+     *
+     * @param cs {@inheritDoc}
      * @return {@inheritDoc}
-     * @inheritDoc
      */
     @Override
     public boolean contains(final Charset cs) {

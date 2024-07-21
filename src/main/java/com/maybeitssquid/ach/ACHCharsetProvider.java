@@ -6,11 +6,21 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Provider for {@link ACHCharset}.
+ */
 @SuppressWarnings("unused")
 public class ACHCharsetProvider extends CharsetProvider {
 
     private static final Charset ACH = new ACHCharset();
     private static final List<Charset> ACH_LIST = Collections.singletonList(ACH);
+
+    /**
+     * Creates an ACHCharsetProvider.
+     */
+    public ACHCharsetProvider() {
+        // EMPTY
+    }
 
     /**
      * {@inheritDoc}
@@ -30,6 +40,7 @@ public class ACHCharsetProvider extends CharsetProvider {
      */
     @Override
     public Charset charsetForName(final String charsetName) {
+        if (charsetName == null) return null;
         if (ACH.name().equals(charsetName) || ACH.aliases().contains(charsetName)) return ACH;
         else return null;
     }
