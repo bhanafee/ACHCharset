@@ -24,13 +24,26 @@ public class TestACHCharsetProvider {
         final Charset charset = provider.charsetForName("X-ACH");
         assertNotNull(charset);
         assertEquals("X-ACH", charset.name());
+        assertFalse(charset.isRegistered());
 
         final Charset aliased = provider.charsetForName("ACH");
         assertNotNull(aliased);
         assertEquals("X-ACH", aliased.name());
+        assertTrue(charset.equals(aliased));
 
         assertNull(provider.charsetForName(null));
         assertNull(provider.charsetForName(""));
         assertNull(provider.charsetForName("foo"));
+    }
+
+    @Test
+    public void testSPIResource() {
+        final Charset charset = Charset.forName("X-ACH");
+        assertNotNull(charset);
+        assertEquals("X-ACH", charset.name());
+
+        final Charset alias = Charset.forName("ACH");
+        assertNotNull(alias);
+        assertEquals("X-ACH", alias.name());
     }
 }
