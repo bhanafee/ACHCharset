@@ -19,7 +19,8 @@ public class TestACHCharset {
     private final byte A = 0x41;
     private final byte B = 0x42;
     private final byte C = 0x43;
-    private final byte[] ABC = new byte[] {A, B, C};
+    private final byte D = 0x44;
+    private final byte[] ABCD = new byte[] {A, B, C, D};
 
     @BeforeEach
     public void setup() {
@@ -42,13 +43,14 @@ public class TestACHCharset {
     /** Test the convenience wrapper using the decoder. */
     @Test
     public void testDecode() {
-        bytes.put(ABC);
+        bytes.put(ABCD);
         bytes.rewind();
         final CharBuffer output = test.decode(bytes);
         assertNotNull(output);
         assertEquals('A', output.get());
         assertEquals('B', output.get());
         assertEquals('C', output.get());
+        assertEquals('D', output.get());
     }
 
     /* Test the decoder directly. */
@@ -58,7 +60,7 @@ public class TestACHCharset {
         final CharsetDecoder decoder = test.newDecoder();
         assertNotNull(decoder);
 
-        bytes.put(ABC);
+        bytes.put(ABCD);
         bytes.limit(3);
         bytes.rewind();
 
@@ -79,7 +81,7 @@ public class TestACHCharset {
         final CharsetDecoder decoder = test.newDecoder();
         assertNotNull(decoder);
 
-        bytes.put(ABC);
+        bytes.put(ABCD);
         bytes.limit(3);
         bytes.rewind();
 
@@ -101,19 +103,27 @@ public class TestACHCharset {
         final CharsetDecoder decoder = test.newDecoder();
         assertNotNull(decoder);
 
-        bytes.put(new byte[] {A, B, 0x02, C});
+        bytes.put(new byte[] {A, 2, B, -128, C, -1, D});
+        bytes.limit(7);
         bytes.rewind();
 
-        CoderResult result = decoder.decode(bytes, chars, false);
-        assertTrue(result.isMalformed());
-        assertEquals(1, result.length());
+        CoderResult result;
+        for (int i = 0; i < 3; i++) {
+            result = decoder.decode(bytes, chars, false);
+            assertTrue(result.isMalformed());
+            assertEquals(1, result.length());
+            bytes.position(bytes.position() + 1);
+        }
+        result = decoder.decode(bytes, chars, true);
+        assertTrue(result.isUnderflow());
 
-        assertEquals(2, bytes.position());
-        assertEquals(2, chars.position());
+        assertEquals(7, bytes.position());
+        assertEquals(4, chars.position());
 
+        final char[] output = new char[4];
         chars.rewind();
-        assertEquals('A', chars.get());
-        assertEquals('B', chars.get());
+        chars.get(output);
+        assertArrayEquals("ABCD".toCharArray(), output);
     }
 
 
@@ -194,18 +204,26 @@ public class TestACHCharset {
         final CharsetEncoder encoder = test.newEncoder();
         assertNotNull(encoder);
 
-        chars.put(new char[] {'A', 'B', 0x02, 'C'});
+        chars.put(new char[] {'A', 0x0002, 'B', 0x0080, 'C', 0x0100, 'D'});
+        chars.limit(7);
         chars.rewind();
 
-        CoderResult result = encoder.encode(chars, bytes, false);
-        assertTrue(result.isUnmappable());
-        assertEquals(1, result.length());
+        CoderResult result;
+        for (int i = 0; i < 3; i++) {
+            result = encoder.encode(chars, bytes, false);
+            assertTrue(result.isUnmappable());
+            assertEquals(1, result.length());
+            chars.position(chars.position() + 1);
+        }
+        result = encoder.encode(chars, bytes, true);
+        assertTrue(result.isUnderflow());
 
-        assertEquals(2, chars.position());
-        assertEquals(2, bytes.position());
+        assertEquals(7, chars.position());
+        assertEquals(4, bytes.position());
 
+        final byte[] output = new byte[4];
         bytes.rewind();
-        assertEquals(0x41, bytes.get());
-        assertEquals(0x42, bytes.get());
+        bytes.get(output);
+        assertArrayEquals(new byte[] {A, B, C, D}, output);
     }
 }

@@ -13,11 +13,11 @@ import java.util.Arrays;
  */
 public class ACHCharset extends Charset {
 
-    private static final char ILLEGAL = '\0';
+    private static final char CANNOT_ENCODE = 0xFFFF;
     private static final char[] ACH = new char[256];
 
     static {
-        Arrays.fill(ACH, ILLEGAL);
+        Arrays.fill(ACH, CANNOT_ENCODE);
         for (int i = 32; i < 127; i++) ACH[i] = (char) i;
     }
 
@@ -53,7 +53,7 @@ public class ACHCharset extends Charset {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     byte b = in.get();
                     char c = ACH[Byte.toUnsignedInt(b)];
-                    if (c != ILLEGAL) {
+                    if (c != CANNOT_ENCODE) {
                         out.put(c);
                     } else {
                         in.position(in.position() - 1);
@@ -75,7 +75,7 @@ public class ACHCharset extends Charset {
         return new CharsetEncoder(this, 1F, 1F) {
             @Override
             public boolean canEncode(final char c) {
-                return c < ACH.length && ACH[c] != ILLEGAL;
+                return c < ACH.length && ACH[c] != CANNOT_ENCODE;
             }
 
             @Override
