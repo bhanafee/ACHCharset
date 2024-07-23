@@ -9,16 +9,24 @@ import java.nio.charset.CoderResult;
 import java.util.Arrays;
 
 /**
- * Character set that allows only the ACH-safe subset of US-ASCII.
+ * Character set that allows only the ACH-safe subset of US-ASCII. It allows characters in the range 0x1F to 0x7F,
+ * exclusive. In addition, it allows linefeed (0x0A), converts newline (0x85) to linefeed (0x0A), and silently skips
+ * carriage return (0x0D).
  */
 public class ACHCharset extends Charset {
 
     private static final char CANNOT_ENCODE = 0xFFFF;
-    private static final char[] ACH = new char[256];
+    private static final char CR = 0x000D;
+    private static final byte CR_BYTE = 0x0D;
+    private static final char[] ACH = new char[0x100];
 
     static {
         Arrays.fill(ACH, CANNOT_ENCODE);
-        for (int i = 32; i < 127; i++) ACH[i] = (char) i;
+        for (int i = 0x20; i < 0x7F; i++) ACH[i] = (char) i;
+        // Special case to allow linefeed
+        ACH[0x0A] = 0x000A;
+        // Special case to map NEL to LF
+        ACH[0x85] = 0x000A;
     }
 
     /**
@@ -55,10 +63,11 @@ public class ACHCharset extends Charset {
                     char c = ACH[Byte.toUnsignedInt(b)];
                     if (c != CANNOT_ENCODE) {
                         out.put(c);
-                    } else {
+                    } else if (b != CR_BYTE) {
                         in.position(in.position() - 1);
                         return CoderResult.malformedForLength(1);
                     }
+                    // Fall through on a CR, so it is consumed but not encoded
                 }
                 return CoderResult.UNDERFLOW;
             }
@@ -84,11 +93,12 @@ public class ACHCharset extends Charset {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     final char c = in.get();
                     if (canEncode(c)) {
-                        out.put((byte) c);
-                    } else {
+                        out.put((byte) ACH[c]);
+                    } else if (c != CR) {
                         in.position(in.position() - 1);
                         return CoderResult.unmappableForLength(1);
                     }
+                    // Fall through on a CR, so it is consumed but not encoded
                 }
                 return CoderResult.UNDERFLOW;
             }

@@ -11,10 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestACHCharset {
 
-    private Charset test;
+    private Charset ACH;
 
     private final CharBuffer chars = CharBuffer.allocate(1024);
     private final ByteBuffer bytes = ByteBuffer.allocate(1024);
+
+    private final byte LF = 0x0A;
+    private final byte CR = 0x0D;
 
     private final byte A = 0x41;
     private final byte B = 0x42;
@@ -24,20 +27,20 @@ public class TestACHCharset {
 
     @BeforeEach
     public void setup() {
-        test = new ACHCharset();
+        ACH = new ACHCharset();
         chars.clear();
         bytes.clear();
     }
 
     @Test
     public void testContains() {
-        assertFalse(test.contains(StandardCharsets.US_ASCII));
-        assertFalse(test.contains(StandardCharsets.ISO_8859_1));
-        assertFalse(test.contains(StandardCharsets.UTF_8));
-        assertFalse(test.contains(null));
+        assertFalse(ACH.contains(StandardCharsets.US_ASCII));
+        assertFalse(ACH.contains(StandardCharsets.ISO_8859_1));
+        assertFalse(ACH.contains(StandardCharsets.UTF_8));
+        assertFalse(ACH.contains(null));
 
-        assertTrue(test.contains(test));
-        assertTrue(test.contains(new ACHCharset()));
+        assertTrue(ACH.contains(ACH));
+        assertTrue(ACH.contains(new ACHCharset()));
     }
 
     /** Test the convenience wrapper using the decoder. */
@@ -45,7 +48,7 @@ public class TestACHCharset {
     public void testDecode() {
         bytes.put(ABCD);
         bytes.rewind();
-        final CharBuffer output = test.decode(bytes);
+        final CharBuffer output = ACH.decode(bytes);
         assertNotNull(output);
         assertEquals('A', output.get());
         assertEquals('B', output.get());
@@ -53,11 +56,35 @@ public class TestACHCharset {
         assertEquals('D', output.get());
     }
 
+    @Test
+    public void testDecodeNewlinesAndReplacements() {
+        final byte NL = -123;
+        final char REPLACEMENT = 0xFFFD;
+
+        bytes.put(new byte[] {A, LF, B, CR, C, NL, D, 127, -1, -2, -128, A});
+        bytes.rewind();
+        final CharBuffer output = ACH.decode(bytes);
+        assertNotNull(output);
+
+        assertEquals('A', output.get());
+        assertEquals('\n', output.get());
+        assertEquals('B', output.get());
+        // CR consumed byt not decoded here
+        assertEquals('C', output.get());
+        assertEquals('\n', output.get());
+        assertEquals('D', output.get());
+        assertEquals(REPLACEMENT, output.get());
+        assertEquals(REPLACEMENT, output.get());
+        assertEquals(REPLACEMENT, output.get());
+        assertEquals(REPLACEMENT, output.get());
+        assertEquals('A', output.get());
+    }
+
     /* Test the decoder directly. */
 
     @Test
     public void testDecoderUnderflow() {
-        final CharsetDecoder decoder = test.newDecoder();
+        final CharsetDecoder decoder = ACH.newDecoder();
         assertNotNull(decoder);
 
         bytes.put(ABCD);
@@ -78,7 +105,7 @@ public class TestACHCharset {
 
     @Test
     public void testDecoderOverflow() {
-        final CharsetDecoder decoder = test.newDecoder();
+        final CharsetDecoder decoder = ACH.newDecoder();
         assertNotNull(decoder);
 
         bytes.put(ABCD);
@@ -100,7 +127,7 @@ public class TestACHCharset {
 
     @Test
     public void testDecoderMalformedInput() {
-        final CharsetDecoder decoder = test.newDecoder();
+        final CharsetDecoder decoder = ACH.newDecoder();
         assertNotNull(decoder);
 
         bytes.put(new byte[] {A, 2, B, -128, C, -1, D});
@@ -126,39 +153,64 @@ public class TestACHCharset {
         assertArrayEquals("ABCD".toCharArray(), output);
     }
 
-
     /** Test the convenience wrapper using the encoder. */
     @Test
     public void testEncode() {
-        final ByteBuffer simple = test.encode("ABC");
+        final ByteBuffer simple = ACH.encode("ABC");
         assertNotNull(simple);
         assertEquals(A, simple.get());
         assertEquals(B, simple.get());
         assertEquals(C, simple.get());
     }
 
+    @Test
+    public void testEncodeNewlinesAndReplacements() {
+        final byte REPLACEMENT = (byte) '?';
+        final String testInput = new String(new char[] {'A', LF,'B', CR, 'C', 0x0085, 'D', 0x007F, 0x0080, 0x0081, 0x00FF, 'A'});
+        final ByteBuffer simple = ACH.encode(testInput);
+        assertNotNull(simple);
+        assertEquals(A, simple.get());
+        assertEquals(0x0A, simple.get(), "Accept LF");
+        assertEquals(B, simple.get());
+        // CR consumed but not encoded here
+        assertEquals(C, simple.get());
+        assertEquals(0x0A, simple.get(), "Convert NEL to LF");
+        assertEquals(D, simple.get());
+        assertEquals(REPLACEMENT, simple.get());
+        assertEquals(REPLACEMENT, simple.get());
+        assertEquals(REPLACEMENT, simple.get());
+        assertEquals(REPLACEMENT, simple.get());
+        assertEquals(A, simple.get());
+    }
 
     /** Test the encoder directly. */
     @Test
     public void testEncoderCanEncode() {
-        final CharsetEncoder encoder = test.newEncoder();
+        final CharsetEncoder encoder = ACH.newEncoder();
         assertNotNull(encoder);
 
         assertTrue(encoder.canEncode('A'));
         assertFalse(encoder.canEncode((char) 0));
-        assertFalse(encoder.canEncode((char) 127));
-        assertFalse(encoder.canEncode((char) 128));
-        assertFalse(encoder.canEncode((char) 129));
-        assertFalse(encoder.canEncode((char) 254));
-        assertFalse(encoder.canEncode((char) 255));
-        assertFalse(encoder.canEncode((char) 257));
+        assertFalse(encoder.canEncode((char) 0x7F));
+        assertFalse(encoder.canEncode((char) 0x80));
+        assertFalse(encoder.canEncode((char) 0x81));
+        assertFalse(encoder.canEncode((char) 0xFD));
+        assertFalse(encoder.canEncode((char) 0xFF));
+        assertFalse(encoder.canEncode((char) 0x100));
+        assertFalse(encoder.canEncode((char) 0x800));
+        assertFalse(encoder.canEncode((char) 0xFFFF));
+
+        // Special cases for newlines
+        assertFalse(encoder.canEncode((char) 0x000D), "Cannot encode CR");
+        assertTrue(encoder.canEncode((char) 0x000A), "Can encode LF");
+        assertTrue(encoder.canEncode((char) 0x0085), "Can encode NEL");
     }
 
     /* Test the encoder directly. */
 
     @Test
     public void testEncoderUnderflow() {
-        final CharsetEncoder encoder = test.newEncoder();
+        final CharsetEncoder encoder = ACH.newEncoder();
         assertNotNull(encoder);
 
         chars.put("ABC");
@@ -179,7 +231,7 @@ public class TestACHCharset {
 
     @Test
     public void testEncoderOverflow() {
-        final CharsetEncoder encoder = test.newEncoder();
+        final CharsetEncoder encoder = ACH.newEncoder();
         assertNotNull(encoder);
 
         chars.put("ABC");
@@ -201,7 +253,7 @@ public class TestACHCharset {
 
     @Test
     public void testEncoderUnmappable() {
-        final CharsetEncoder encoder = test.newEncoder();
+        final CharsetEncoder encoder = ACH.newEncoder();
         assertNotNull(encoder);
 
         chars.put(new char[] {'A', 0x0002, 'B', 0x0080, 'C', 0x0100, 'D'});
@@ -218,7 +270,9 @@ public class TestACHCharset {
         result = encoder.encode(chars, bytes, true);
         assertTrue(result.isUnderflow());
 
+        // read all characters
         assertEquals(7, chars.position());
+        // encoding does not include 3 bad characters
         assertEquals(4, bytes.position());
 
         final byte[] output = new byte[4];
