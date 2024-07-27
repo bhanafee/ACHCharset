@@ -17,8 +17,12 @@ by this ACH Charset:
 
 The above rules cause `CRLF` to be encoded and decoded as `LF` on all platforms. In addition:
 * `0x7F` is an unprintable control character called `DEL`. It is not allowed.
-* `0x85` is a newline character. In UTF-8 encoding, it is equivalent to the EBCDIC NL character used by mainframe
-  systems as a line delimiter. For compatibility, this character set encodes and decodes newline as a linefeed.
+* `0x85` is encoded as a newline character. In Unicode, it is equivalent to the EBCDIC NL character used by mainframe
+  systems as a line delimiter. For compatibility, this character set only encodes newline as a linefeed. *Encoding* is
+  safe because the character is definitely a Unicode newline. *Decoding* a `0x85` byte would not be safe because it
+  would require guessing the actual (non-ASCII) encoding of the input stream. If it was UTF-8 then `0x85` would be the
+  second or later byte of a multibyte encoding. If it was WIN-1252 then `0x85` would be a horizontal ellipsis (…).
+  If it was ISO-8859-1 then `0x85` would be undefined.
 
 ## Disallowed character handling
 

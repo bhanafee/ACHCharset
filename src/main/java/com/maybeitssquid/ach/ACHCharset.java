@@ -55,13 +55,17 @@ public class ACHCharset extends Charset {
     @Override
     public CharsetDecoder newDecoder() {
         return new CharsetDecoder(this, 1F, 1F) {
+            private boolean canDecode(final byte b) {
+                return b >= 0 && ACH[Byte.toUnsignedInt(b)] != CANNOT_ENCODE;
+            }
+
             @Override
             protected CoderResult decodeLoop(final ByteBuffer in, final CharBuffer out) {
                 while (in.hasRemaining()) {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     byte b = in.get();
-                    char c = ACH[Byte.toUnsignedInt(b)];
-                    if (c != CANNOT_ENCODE) {
+                    if (canDecode(b)) {
+                        char c = ACH[Byte.toUnsignedInt(b)];
                         out.put(c);
                     } else if (b != CR_BYTE) {
                         in.position(in.position() - 1);

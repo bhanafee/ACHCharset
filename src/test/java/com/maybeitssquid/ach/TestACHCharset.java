@@ -71,7 +71,7 @@ public class TestACHCharset {
         assertEquals('B', output.get());
         // CR consumed byt not decoded here
         assertEquals('C', output.get());
-        assertEquals('\n', output.get());
+        assertEquals(REPLACEMENT, output.get());
         assertEquals('D', output.get());
         assertEquals(REPLACEMENT, output.get());
         assertEquals(REPLACEMENT, output.get());
