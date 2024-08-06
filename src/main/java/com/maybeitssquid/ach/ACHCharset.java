@@ -10,20 +10,18 @@ import java.util.Arrays;
 
 /**
  * Character set that allows only the ACH-safe subset of US-ASCII. It allows characters in the range 0x1F to 0x7F,
- * exclusive. In addition, it allows linefeed (0x0A) and silently skips carriage return (0x0D).
+ * exclusive, plus linefeed (0x0A).
  */
 public class ACHCharset extends Charset {
 
     private static final byte CANNOT_ENCODE = -1;
-    private static final char CR = 0x000D;
-    private static final byte CR_BYTE = 0x0D;
     private static final byte[] ENCODINGS = new byte[0x100];
 
     static {
         Arrays.fill(ENCODINGS, CANNOT_ENCODE);
         for (byte i = 0x20; i < 0x7F; i++) ENCODINGS[i] = i;
         // Special case to allow linefeed
-        ENCODINGS[0x0A] = 0x000A;
+        ENCODINGS[0x0A] = 0x0A;
     }
 
     /**
@@ -63,11 +61,10 @@ public class ACHCharset extends Charset {
                     byte b = in.get();
                     if (canDecode(b)) {
                         out.put((char) ENCODINGS[Byte.toUnsignedInt(b)]);
-                    } else if (b != CR_BYTE) {
+                    } else {
                         in.position(in.position() - 1);
                         return CoderResult.malformedForLength(1);
                     }
-                    // Fall through on a CR, so it is consumed but not encoded
                 }
                 return CoderResult.UNDERFLOW;
             }
@@ -94,11 +91,10 @@ public class ACHCharset extends Charset {
                     final char c = in.get();
                     if (canEncode(c)) {
                         out.put(ENCODINGS[c]);
-                    } else if (c != CR) {
+                    } else {
                         in.position(in.position() - 1);
                         return CoderResult.unmappableForLength(1);
                     }
-                    // Fall through on a CR, so it is consumed but not encoded
                 }
                 return CoderResult.UNDERFLOW;
             }

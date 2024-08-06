@@ -69,7 +69,7 @@ public class TestACHCharset {
         assertEquals('A', output.get());
         assertEquals('\n', output.get());
         assertEquals('B', output.get());
-        // CR consumed byt not decoded here
+        assertEquals(REPLACEMENT, output.get());
         assertEquals('C', output.get());
         assertEquals(REPLACEMENT, output.get());
         assertEquals('D', output.get());
@@ -172,7 +172,7 @@ public class TestACHCharset {
         assertEquals(A, simple.get());
         assertEquals(0x0A, simple.get(), "Accept LF");
         assertEquals(B, simple.get());
-        // CR consumed but not encoded here
+        assertEquals(REPLACEMENT, simple.get());
         assertEquals(C, simple.get());
         assertEquals(D, simple.get());
         assertEquals(REPLACEMENT, simple.get());
