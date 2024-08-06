@@ -62,8 +62,7 @@ public class ACHCharset extends Charset {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     byte b = in.get();
                     if (canDecode(b)) {
-                        char ch = (char) Byte.toUnsignedInt(b);
-                        out.put(ch);
+                        out.put((char) ENCODINGS[Byte.toUnsignedInt(b)]);
                     } else if (b != CR_BYTE) {
                         in.position(in.position() - 1);
                         return CoderResult.malformedForLength(1);
