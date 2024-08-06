@@ -10,23 +10,20 @@ import java.util.Arrays;
 
 /**
  * Character set that allows only the ACH-safe subset of US-ASCII. It allows characters in the range 0x1F to 0x7F,
- * exclusive. In addition, it allows linefeed (0x0A), converts newline (0x85) to linefeed (0x0A), and silently skips
- * carriage return (0x0D).
+ * exclusive. In addition, it allows linefeed (0x0A) and silently skips carriage return (0x0D).
  */
 public class ACHCharset extends Charset {
 
     private static final char CANNOT_ENCODE = 0xFFFF;
     private static final char CR = 0x000D;
     private static final byte CR_BYTE = 0x0D;
-    private static final char[] ACH = new char[0x100];
+    private static final char[] ENCODINGS = new char[0x100];
 
     static {
-        Arrays.fill(ACH, CANNOT_ENCODE);
-        for (int i = 0x20; i < 0x7F; i++) ACH[i] = (char) i;
+        Arrays.fill(ENCODINGS, CANNOT_ENCODE);
+        for (int i = 0x20; i < 0x7F; i++) ENCODINGS[i] = (char) i;
         // Special case to allow linefeed
-        ACH[0x0A] = 0x000A;
-        // Special case to map NEL to LF
-        ACH[0x85] = 0x000A;
+        ENCODINGS[0x0A] = 0x000A;
     }
 
     /**
@@ -56,7 +53,7 @@ public class ACHCharset extends Charset {
     public CharsetDecoder newDecoder() {
         return new CharsetDecoder(this, 1F, 1F) {
             private boolean canDecode(final byte b) {
-                return b >= 0 && ACH[Byte.toUnsignedInt(b)] != CANNOT_ENCODE;
+                return b >= 0 && ENCODINGS[Byte.toUnsignedInt(b)] != CANNOT_ENCODE;
             }
 
             @Override
@@ -65,7 +62,7 @@ public class ACHCharset extends Charset {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     byte b = in.get();
                     if (canDecode(b)) {
-                        char c = ACH[Byte.toUnsignedInt(b)];
+                        char c = ENCODINGS[Byte.toUnsignedInt(b)];
                         out.put(c);
                     } else if (b != CR_BYTE) {
                         in.position(in.position() - 1);
@@ -88,7 +85,7 @@ public class ACHCharset extends Charset {
         return new CharsetEncoder(this, 1F, 1F) {
             @Override
             public boolean canEncode(final char c) {
-                return c < ACH.length && ACH[c] != CANNOT_ENCODE;
+                return c < ENCODINGS.length && ENCODINGS[c] != CANNOT_ENCODE;
             }
 
             @Override
@@ -97,7 +94,7 @@ public class ACHCharset extends Charset {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     final char c = in.get();
                     if (canEncode(c)) {
-                        out.put((byte) ACH[c]);
+                        out.put((byte) ENCODINGS[c]);
                     } else if (c != CR) {
                         in.position(in.position() - 1);
                         return CoderResult.unmappableForLength(1);

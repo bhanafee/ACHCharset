@@ -166,7 +166,7 @@ public class TestACHCharset {
     @Test
     public void testEncodeNewlinesAndReplacements() {
         final byte REPLACEMENT = (byte) '?';
-        final String testInput = new String(new char[] {'A', LF,'B', CR, 'C', 0x0085, 'D', 0x007F, 0x0080, 0x0081, 0x00FF, 'A'});
+        final String testInput = new String(new char[] {'A', LF,'B', CR, 'C', 'D', 0x007F, 0x0080, 0x0081, 0x00FF, 'A'});
         final ByteBuffer simple = ACH.encode(testInput);
         assertNotNull(simple);
         assertEquals(A, simple.get());
@@ -174,7 +174,6 @@ public class TestACHCharset {
         assertEquals(B, simple.get());
         // CR consumed but not encoded here
         assertEquals(C, simple.get());
-        assertEquals(0x0A, simple.get(), "Convert NEL to LF");
         assertEquals(D, simple.get());
         assertEquals(REPLACEMENT, simple.get());
         assertEquals(REPLACEMENT, simple.get());
@@ -203,7 +202,6 @@ public class TestACHCharset {
         // Special cases for newlines
         assertFalse(encoder.canEncode((char) 0x000D), "Cannot encode CR");
         assertTrue(encoder.canEncode((char) 0x000A), "Can encode LF");
-        assertTrue(encoder.canEncode((char) 0x0085), "Can encode NEL");
     }
 
     /* Test the encoder directly. */
