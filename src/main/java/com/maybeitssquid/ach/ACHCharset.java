@@ -14,14 +14,14 @@ import java.util.Arrays;
  */
 public class ACHCharset extends Charset {
 
-    private static final char CANNOT_ENCODE = 0xFFFF;
+    private static final byte CANNOT_ENCODE = -1;
     private static final char CR = 0x000D;
     private static final byte CR_BYTE = 0x0D;
-    private static final char[] ENCODINGS = new char[0x100];
+    private static final byte[] ENCODINGS = new byte[0x100];
 
     static {
         Arrays.fill(ENCODINGS, CANNOT_ENCODE);
-        for (int i = 0x20; i < 0x7F; i++) ENCODINGS[i] = (char) i;
+        for (byte i = 0x20; i < 0x7F; i++) ENCODINGS[i] = i;
         // Special case to allow linefeed
         ENCODINGS[0x0A] = 0x000A;
     }
@@ -53,7 +53,7 @@ public class ACHCharset extends Charset {
     public CharsetDecoder newDecoder() {
         return new CharsetDecoder(this, 1F, 1F) {
             private boolean canDecode(final byte b) {
-                return b >= 0 && ENCODINGS[Byte.toUnsignedInt(b)] != CANNOT_ENCODE;
+                return ENCODINGS[Byte.toUnsignedInt(b)] != CANNOT_ENCODE;
             }
 
             @Override
@@ -62,8 +62,8 @@ public class ACHCharset extends Charset {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     byte b = in.get();
                     if (canDecode(b)) {
-                        char c = ENCODINGS[Byte.toUnsignedInt(b)];
-                        out.put(c);
+                        char ch = (char) Byte.toUnsignedInt(b);
+                        out.put(ch);
                     } else if (b != CR_BYTE) {
                         in.position(in.position() - 1);
                         return CoderResult.malformedForLength(1);
@@ -94,7 +94,7 @@ public class ACHCharset extends Charset {
                     if (!out.hasRemaining()) return CoderResult.OVERFLOW;
                     final char c = in.get();
                     if (canEncode(c)) {
-                        out.put((byte) ENCODINGS[c]);
+                        out.put(ENCODINGS[c]);
                     } else if (c != CR) {
                         in.position(in.position() - 1);
                         return CoderResult.unmappableForLength(1);
