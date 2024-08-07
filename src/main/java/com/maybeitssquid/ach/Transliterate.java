@@ -334,7 +334,7 @@ public class Transliterate extends CharsetEncoder {
                 } else if (ct == SPACE_SEPARATOR) {
                     out.put(SPACE);
                 } else if (ct == INITIAL_QUOTE_PUNCTUATION || ct == FINAL_QUOTE_PUNCTUATION) {
-                    // convert(char) already covers apostrophes within this category
+                    // convert(char) already covers apostrophes within these categories
                     out.put(QUOTATION_MARK);
                 } else if (ct == START_PUNCTUATION) {
                     // convert(char) already covers left square and curly brackets
