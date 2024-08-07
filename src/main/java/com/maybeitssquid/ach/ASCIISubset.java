@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public class ASCIISubset extends Charset {
 
+    public static final byte REPLACEMENT = (byte) '?';
     private static final char UNUSED = '\uFFFF';
     private static final char[] PURE_ASCII = new char[0x80];
 
@@ -100,7 +101,7 @@ public class ASCIISubset extends Charset {
 
     @Override
     public CharsetEncoder newEncoder() {
-        return new CharsetEncoder(this, 1F, 1F) {
+        return new CharsetEncoder(this, 1F, 1F, new byte[]{REPLACEMENT}) {
             @Override
             public boolean canEncode(final char c) {
                 return c < decode.length && decode[c] == c;
