@@ -296,10 +296,9 @@ public class Transliterate extends CharsetEncoder {
                         in.position(in.position() - 1);
                         return CoderResult.unmappableForLength(1);
                     }
-                    final String normalized = Normalizer.normalize(csq, Normalizer.Form.NFKD);
                     final int mark = out.position();
                     try {
-                        emit(normalized, out);
+                        emit(csq, out);
                     } catch (final BufferOverflowException e) {
                         final int read = -b;
                         in.position(out.position() - read);
@@ -318,19 +317,8 @@ public class Transliterate extends CharsetEncoder {
         return CoderResult.UNDERFLOW;
     }
 
-    private byte convert(final char ch) {
-        if (ch < '\u0080') {
-            return (byte) ch;
-        } else if (SPECIALS.containsKey(ch)) {
-            return SPECIALS.get(ch);
-        } else if (isHighSurrogate(ch)) {
-            return -2;
-        } else {
-            return -1;
-        }
-    }
-
-    private void emit(final String normalized, final ByteBuffer out) throws BufferOverflowException {
+    private void emit(final CharSequence csq, final ByteBuffer out) throws BufferOverflowException {
+        final String normalized = Normalizer.normalize(csq, Normalizer.Form.NFKD);
         for (int i = 0; i < normalized.length(); i++) {
             final char ch = normalized.charAt(i);
             final byte b = convert(ch);
@@ -369,6 +357,18 @@ public class Transliterate extends CharsetEncoder {
                     out.put(replacement());
                 }
             }
+        }
+    }
+
+    private byte convert(final char ch) {
+        if (ch < '\u0080') {
+            return (byte) ch;
+        } else if (SPECIALS.containsKey(ch)) {
+            return SPECIALS.get(ch);
+        } else if (isHighSurrogate(ch)) {
+            return -2;
+        } else {
+            return -1;
         }
     }
 
