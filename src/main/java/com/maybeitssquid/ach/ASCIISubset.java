@@ -50,7 +50,7 @@ public class ASCIISubset extends Charset {
 
     @Override
     public boolean contains(final Charset cs) {
-        if (cs == this) {
+        if (this.equals(cs)) {
             return true;
         } else if (cs == null) {
             return false;

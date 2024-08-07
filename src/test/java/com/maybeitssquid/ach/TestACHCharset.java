@@ -135,12 +135,25 @@ public class TestACHCharset {
         bytes.rewind();
 
         CoderResult result;
-        for (int i = 0; i < 3; i++) {
-            result = decoder.decode(bytes, chars, false);
-            assertTrue(result.isMalformed());
-            assertEquals(1, result.length());
-            bytes.position(bytes.position() + 1);
-        }
+
+        result = decoder.decode(bytes, chars, false);
+        // encodings within ASCII range are merely unmappable
+        assertTrue(result.isUnmappable());
+        assertEquals(1, result.length());
+        bytes.position(bytes.position() + 1);
+
+        result = decoder.decode(bytes, chars, false);
+        // encodings outside ASCII range are malformed
+        assertTrue(result.isMalformed());
+        assertEquals(1, result.length());
+        bytes.position(bytes.position() + 1);
+
+        result = decoder.decode(bytes, chars, false);
+        // encodings outside ASCII range are malformed
+        assertTrue(result.isMalformed());
+        assertEquals(1, result.length());
+        bytes.position(bytes.position() + 1);
+
         result = decoder.decode(bytes, chars, true);
         assertTrue(result.isUnderflow());
 
