@@ -17,7 +17,7 @@ public class ASCIISubset extends Charset {
         }
     }
 
-    private final char[] decode;
+    private final char[] decoder;
 
     /**
      * Initializes a new ASCII subset with the given canonical name and alias set.
@@ -32,16 +32,16 @@ public class ASCIISubset extends Charset {
     protected ASCIISubset(final String canonicalName, final String[] aliases, final boolean controls, final char... allowed) {
         super(canonicalName, aliases);
         if (controls && (allowed == null || allowed.length == 0)) {
-            this.decode = PURE_ASCII;
+            this.decoder = PURE_ASCII;
         } else {
-            this.decode = Arrays.copyOf(PURE_ASCII, PURE_ASCII.length);
+            this.decoder = Arrays.copyOf(PURE_ASCII, PURE_ASCII.length);
             if (!controls) {
-                Arrays.fill(this.decode, 0x00, 0x20, UNUSED);
-                this.decode[0x7F] = UNUSED;
+                Arrays.fill(this.decoder, 0x00, 0x20, UNUSED);
+                this.decoder[0x7F] = UNUSED;
             }
             for (final char ch : allowed) {
                 if (ch < 0x80) {
-                    this.decode[ch] = ch;
+                    this.decoder[ch] = ch;
                 } else {
                     throw new IllegalArgumentException("Non-ASCII character '" + ch + "' cannot be used in ASCII subset");
                 }
@@ -56,11 +56,11 @@ public class ASCIISubset extends Charset {
         } else if (cs == null) {
             return false;
         } else if (StandardCharsets.US_ASCII.equals(cs)) {
-            return this.decode == PURE_ASCII;
-        } else if (ASCIISubset.class.equals(cs.getClass())) {
+            return this.decoder == PURE_ASCII;
+        } else if (cs instanceof ASCIISubset) {
             final ASCIISubset that = (ASCIISubset) cs;
-            for (int i = 0; i < this.decode.length; i++) {
-                if (this.decode[i] != that.decode[i] && that.decode[i] != UNUSED) {
+            for (int i = 0; i < this.decoder.length; i++) {
+                if (this.decoder[i] != that.decoder[i] && that.decoder[i] != UNUSED) {
                     return false;
                 }
             }
@@ -84,7 +84,7 @@ public class ASCIISubset extends Charset {
                             in.position(in.position() - 1);
                             return CoderResult.malformedForLength(1);
                         } else {
-                            final char ch = decode[Byte.toUnsignedInt(b)];
+                            final char ch = decoder[Byte.toUnsignedInt(b)];
                             if (ch == UNUSED) {
                                 in.position(in.position() - 1);
                                 return CoderResult.unmappableForLength(1);
@@ -104,7 +104,7 @@ public class ASCIISubset extends Charset {
         return new CharsetEncoder(this, 1F, 1F, new byte[]{REPLACEMENT}) {
             @Override
             public boolean canEncode(final char c) {
-                return c < decode.length && decode[c] == c;
+                return c < decoder.length && decoder[c] == c;
             }
 
             @Override
