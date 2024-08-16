@@ -222,4 +222,11 @@ public class TestTransliterate {
 
         assertEquals("0", transliterate(Character.toString(0x10D30)));
     }
+
+    @Test
+    public void testEllipses() {
+        assertEquals("...", transliterate(Character.toString(0x1801))); // Mongolian ellipsis
+        assertEquals("...", transliterate(Character.toString(0x2026))); // Horizontal ellipsis
+        assertEquals("...", transliterate(Character.toString(0xFE19))); // Vertical ellipsis
+    }
 }

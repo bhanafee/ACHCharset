@@ -196,8 +196,6 @@ public class Transliterate extends ASCIISubset {
         DIRECT.put(0x1F4B2, DOLLAR_SIGN);  // Heavy dollar sign
 
         DIRECT.put((int) '\u1801', ELLIPSES);  // Mongolian ellipsis
-        DIRECT.put((int) '\u2026', ELLIPSES);  // Horizontal ellipsis
-        DIRECT.put((int) '\uFE19', ELLIPSES);  // Vertical ellipsis
     }
 
     /**
