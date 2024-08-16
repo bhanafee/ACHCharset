@@ -137,7 +137,7 @@ public class TestTransliterate {
 
     @Test
     public void testDashPunctuation() {
-        final String keep = "\u002D\u058A\u05BE\u1400\u1806\u2010\u2011\u2012\u2013\u2014\u2015\u2E17\u2E1A" +
+        final String keep = "-\u002D\u058A\u05BE\u1400\u1806\u2010\u2011\u2012\u2013\u2014\u2015\u2E17\u2E1A" +
                 "\u2E3B\u2E40\u2E5D\u301C\u3030\u30A0\uFE31\uFE32\uFE58\uFE63\uFF0D";
 
         test("", keep, "-".repeat(keep.length()));
@@ -146,50 +146,82 @@ public class TestTransliterate {
 
     @Test
     public void testConnectorPunctuation() {
-        final String keep = "\u005F\u203F\u2040\u2054\uFE33\uFE34\uFE4D\uFE4E\uFE4F\uFF3F";
+        final String keep = "_\u005F\u203F\u2040\u2054\uFE33\uFE34\uFE4D\uFE4E\uFE4F\uFF3F";
         test("", keep, "_".repeat(keep.length()));
     }
 
     @Test
     public void testSpaceSeparator() {
-        final String keep = "\u0020\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009" +
+        final String keep = " \u0020\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009" +
                 "\u200A\u202F\u205F\u3000";
         test("", keep, " ".repeat(keep.length()));
     }
 
     @Test
     public void testApostrophe() {
-        final String left = "\u201B\u201B\u2039\u2039";
-        final String right = "\u2019\u203A";
-        final String keep = left + right;
+        final String quotes = "'\u2019\u201B\u2039\u203A";
+        final String special = "\u02B9\u02BC\u02C8\u05F3\u2032\uA78C";
+        final String keep = quotes + special;
         test("", keep, "'".repeat(keep.length()));
+    }
+
+    @Test
+    public void testExclamation() {
+        final String keep = "!\u00A1\u01C3\u26A0\u2757\u2762\u2E53\uA71D";
+        test("", keep, "!".repeat(keep.length()));
+    }
+
+    @Test
+    public void testNumberSign() {
+        final String keep = "#\u2114\u2317\u266F\u29E3";
+        test("", keep, "#".repeat(keep.length()));
+    }
+
+    @Test
+    public void testPercentSign() {
+        final String keep = "%\u066A";
+        test("", keep, "%".repeat(keep.length()));
+    }
+
+    @Test
+    public void testAmpersand() {
+        final String keep = "&\u204A\u214B";
+        test("", keep, "&".repeat(keep.length()));
+        assertEquals("&", transliterate(Character.toString(0x1F674))); // Heavy ampersand ornament
+    }
+
+    @Test
+    public void testBacktick() {
+        final String keep = "`\u2035";
+        test("", keep, "`".repeat(keep.length()));
     }
 
     @Test
     public void testQuote() {
         final String left = "\u00AB\u201C\u201F\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20";
         final String right = "\u00BB\u201D\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21";
-        final String keep = left + right;
+        final String special = "\u02BA\u02EE\u05F4\u2033\u3003";
+        final String keep = "\"" + left + right + special;
         test("", keep, "\"".repeat(keep.length()));
     }
 
     @Test
     public void testStartPunctuation() {
-        final String parenthesis = "\u0028\u0F3A\u0F3C\u169B\u201A\u201E\u207D\u208D\u2308\u230A\u2329\uFF62";
+        final String parenthesis = "(\u0028\u0F3A\u0F3C\u169B\u201A\u201E\u207D\u208D\u2308\u230A\u2329\uFF62";
         test("", parenthesis, "(".repeat(parenthesis.length()));
-        final String square = "\u005B\u2045\u27E6\u298B\u298D\u298F";
+        final String square = "[\u005B\u2045\u27E6\u298B\u298D\u298F";
         test("", square, "[".repeat(square.length()));
-        final String curly = "\u007B\u2774\u2983";
+        final String curly = "{\u007B\u2774\u2983";
         test("", curly, "{".repeat(curly.length()));
     }
 
     @Test
     public void testEndPunctuation() {
-        final String parenthesis = "\u0029\u0F3B\u0F3D\u169C\u207E\u208E\u2309\u230B\u232A\uFF63";
+        final String parenthesis = ")\u0029\u0F3B\u0F3D\u169C\u207E\u208E\u2309\u230B\u232A\uFF63";
         test("", parenthesis, ")".repeat(parenthesis.length()));
-        final String square = "\u005D\u2046\u27E7\u298C\u298E\u2990";
+        final String square = "]\u005D\u2046\u27E7\u298C\u298E\u2990";
         test("", square, "]".repeat(square.length()));
-        final String curly = "\u007D\u2775\u2984";
+        final String curly = "}\u007D\u2775\u2984";
         test("", curly, "}".repeat(curly.length()));
     }
 
@@ -225,7 +257,6 @@ public class TestTransliterate {
 
     @Test
     public void testEllipses() {
-        assertEquals("...", transliterate(Character.toString(0x1801))); // Mongolian ellipsis
         assertEquals("...", transliterate(Character.toString(0x2026))); // Horizontal ellipsis
         assertEquals("...", transliterate(Character.toString(0xFE19))); // Vertical ellipsis
     }

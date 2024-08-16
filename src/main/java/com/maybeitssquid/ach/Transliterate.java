@@ -17,43 +17,40 @@ import static java.lang.Character.*;
 public class Transliterate extends ASCIISubset {
     private static final int UNICODE_REPLACEMENT = '\uFFFD';
 
-    private static final byte[] NOTHING = new byte[0];
     private static final byte[] NEWLINE = System.lineSeparator().getBytes(StandardCharsets.US_ASCII);
-    private static final byte[] ELLIPSES = {(byte) '.', (byte) '.', (byte) '.'};
-    private static final byte[] INTERROBANG = {(byte) '?', (byte) '!'};
+    private static final byte HYPHEN_MINUS = (byte) '-';
+    private static final byte SPACE = (byte) ' ';
 
-    private static final byte[] SPACE = {(byte) ' '};
-    private static final byte[] EXCLAMATION_MARK = {(byte) '!'};
-    private static final byte[] QUOTATION_MARK = {(byte) '"'};
-    private static final byte[] NUMBER_SIGN = {(byte) '#'};
-    private static final byte[] DOLLAR_SIGN = {(byte) '$'};
-    private static final byte[] PERCENT_SIGN = {(byte) '%'};
-    private static final byte[] AMPERSAND = {(byte) '&'};
-    private static final byte[] APOSTROPHE = {(byte) '\''};
-    private static final byte[] BACKTICK = {(byte) '`'};
-    private static final byte[] LEFT_PARENTHESIS = {(byte) '('};
-    private static final byte[] RIGHT_PARENTHESIS = {(byte) ')'};
-    private static final byte[] LEFT_SQUARE_BRACKET = {(byte) '['};
-    private static final byte[] RIGHT_SQUARE_BRACKET = {(byte) ']'};
-    private static final byte[] LEFT_CURLY_BRACKET = {(byte) '{'};
-    private static final byte[] RIGHT_CURLY_BRACKET = {(byte) '}'};
-    private static final byte[] ASTERISK = {(byte) '*'};
-    private static final byte[] PLUS_SIGN = {(byte) '+'};
-    private static final byte[] COMMA = {(byte) ','};
-    private static final byte[] HYPHEN_MINUS = {(byte) '-'};
-    private static final byte[] FULL_STOP = {(byte) '.'};
-    private static final byte[] SOLIDUS = {(byte) '/'};
-    private static final byte[] REVERSE_SOLIDUS = {(byte) '\\'};
-    private static final byte[] COLON = {(byte) ':'};
-    private static final byte[] SEMICOLON = {(byte) ';'};
-    private static final byte[] EQUALS = {(byte) '='};
-    private static final byte[] QUESTION_MARK = {(byte) '?'};
-    private static final byte[] CIRCUMFLEX_ACCENT = {(byte) '^'};
-    private static final byte[] LOW_LINE = {(byte) '_'};
-    private static final byte[] VERTICAL_LINE = {(byte) '|'};
-    private static final byte[] TILDE = {(byte) '~'};
+    private static final byte EXCLAMATION_MARK = (byte) '!';
+    private static final byte QUOTATION_MARK = (byte) '"';
+    private static final byte NUMBER_SIGN = (byte) '#';
+    private static final byte PERCENT_SIGN = (byte) '%';
+    private static final byte AMPERSAND = (byte) '&';
+    private static final byte APOSTROPHE = (byte) '\'';
+    private static final byte BACKTICK = (byte) '`';
+    private static final byte LEFT_PARENTHESIS = (byte) '(';
+    private static final byte RIGHT_PARENTHESIS = (byte) ')';
+    private static final byte LEFT_SQUARE_BRACKET = (byte) '[';
+    private static final byte RIGHT_SQUARE_BRACKET = (byte) ']';
+    private static final byte LEFT_CURLY_BRACKET = (byte) '{';
+    private static final byte RIGHT_CURLY_BRACKET = (byte) '}';
+    private static final byte ASTERISK = (byte) '*';
+    private static final byte PLUS_SIGN = (byte) '+';
+    private static final byte COMMA = (byte) ',';
+    private static final byte FULL_STOP = (byte) '.';
+    private static final byte SOLIDUS = (byte) '/';
+    private static final byte REVERSE_SOLIDUS = (byte) '\\';
+    private static final byte COLON = (byte) ':';
+    private static final byte SEMICOLON = (byte) ';';//
+    private static final byte EQUALS =(byte) '=';
+    private static final byte QUESTION_MARK = (byte) '?';
+    private static final byte CIRCUMFLEX_ACCENT = (byte) '^';
+    private static final byte LOW_LINE = (byte) '_';
+    private static final byte VERTICAL_LINE = (byte) '|';
+    private static final byte TILDE = (byte) '~';
+    private static final byte DOLLAR_SIGN = (byte) '$';
 
-    private static final Map<Integer, byte[]> DIRECT = new HashMap<>();
+    private static final Map<Integer, Byte> DIRECT = new HashMap<>();
 
     static {
         // EXCLAMATION MARK
@@ -172,7 +169,7 @@ public class Transliterate extends ASCIISubset {
         DIRECT.put((int) '\u2BD1', QUESTION_MARK); // Uncertainty sign
         DIRECT.put((int) '\u2E2E', QUESTION_MARK); // Reversed question mark
         DIRECT.put((int) '\u2E54', QUESTION_MARK); // Medieval question mark
-        DIRECT.put((int) '\u203D', INTERROBANG); // Interrobang
+        DIRECT.put((int) '\u203D', QUESTION_MARK); // Interrobang
         // CIRCUMFLEX ACCENT
         DIRECT.put((int) '\u2038', CIRCUMFLEX_ACCENT); // Caret
         DIRECT.put((int) '\u2227', CIRCUMFLEX_ACCENT); // Logical and
@@ -194,8 +191,6 @@ public class Transliterate extends ASCIISubset {
         DIRECT.put((int) '\u2E2F', TILDE); // Vertical tilde
 
         DIRECT.put(0x1F4B2, DOLLAR_SIGN);  // Heavy dollar sign
-
-        DIRECT.put((int) '\u1801', ELLIPSES);  // Mongolian ellipsis
     }
 
     /**
