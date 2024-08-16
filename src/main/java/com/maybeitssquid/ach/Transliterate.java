@@ -225,7 +225,7 @@ public class Transliterate extends ASCIISubset {
                 try {
                     transliterate(codepoint, out);
                     if (out.position() == mark) {
-                        final String normalized = Normalizer.normalize(in, Normalizer.Form.NFKD);
+                        final String normalized = Normalizer.normalize(Character.toString(codepoint), Normalizer.Form.NFKD);
                         normalized.codePoints().forEach(i -> transliterate(i, out));
                     }
                     if (out.position() == mark) {

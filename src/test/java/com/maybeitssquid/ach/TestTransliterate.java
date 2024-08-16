@@ -137,11 +137,11 @@ public class TestTransliterate {
 
     @Test
     public void testDashPunctuation() {
-        final String keep = "\u002D\u058A\u058B\u1400\u1806\u2010\u2011\u2012\u2013\u2014\u2015\u2E17\u2E1A" +
-                "\u2E3A\u2E3B\u2E40\u2E5D\u301C\u3030\u30A0\uFE31\uFE32\uFE58\uFE63\uFE0D" +
-                Character.toString(0x10EAD);
+        final String keep = "\u002D\u058A\u05BE\u1400\u1806\u2010\u2011\u2012\u2013\u2014\u2015\u2E17\u2E1A" +
+                "\u2E3B\u2E40\u2E5D\u301C\u3030\u30A0\uFE31\uFE32\uFE58\uFE63\uFF0D";
 
         test("", keep, "-".repeat(keep.length()));
+        assertEquals("-", transliterate(Character.toString(0x10EAD)));
     }
 
     @Test
