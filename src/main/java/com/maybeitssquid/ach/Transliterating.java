@@ -106,6 +106,12 @@ public class Transliterating extends Categorizing {
         return this;
     }
 
+    @Override
+    public Transliterating blockControls() {
+        super.blockControls();
+        return this;
+    }
+
     protected char[] byName(final int codepoint) {
         final String name = Character.getName(codepoint);
         if (name.contains("EXCLAMATION MARK")) {
@@ -178,7 +184,11 @@ public class Transliterating extends Categorizing {
     }
 
     protected char[] control(final int codepoint) {
-        return codepoint == UNICODE_NEL ? newLine() : super.control(codepoint);
+        if (codepoint == UNICODE_NEL) {
+            return newLine();
+        } else {
+            return super.control(codepoint);
+        }
     }
 
     protected char[] startPunctuation(final int codepoint) {

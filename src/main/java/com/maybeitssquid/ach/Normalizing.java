@@ -54,7 +54,17 @@ public class Normalizing extends ASCIIFilter {
 
     @Override
     public Normalizing block(final int codepoint) {
-        super.block(codepoint);
+        if (codepoint > 0x0080) {
+            encodings.remove(codepoint);
+        } else {
+            super.block(codepoint);
+        }
+        return this;
+    }
+
+    @Override
+    public Normalizing blockControls() {
+        super.blockControls();
         return this;
     }
 

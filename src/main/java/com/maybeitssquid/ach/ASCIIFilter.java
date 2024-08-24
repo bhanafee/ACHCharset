@@ -52,11 +52,23 @@ public class ASCIIFilter implements IntFunction<char[]> {
         return this;
     }
 
-    protected char[] newLine() {
+    /**
+     * Shorthand equivalent to invoking {@link #block(int)} on every codepoint from {@code 0x0000} through
+     * {@code 0x001F} inclusive, and on {@code 0x7F}.
+     */
+    public ASCIIFilter blockControls() {
+        for (int i = 0x00; i < 0x20; i++) {
+            this.ASCII[i] = NOTHING;
+        }
+        this.ASCII[0xFF] = NOTHING;
+        return this;
+    }
+
+    public char[] newLine() {
         return ASCII['\n'];
     }
 
-    protected char[] replacement() {
+    public char[] replacement() {
         return ASCII['?'];
     }
 

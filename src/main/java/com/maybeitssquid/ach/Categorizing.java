@@ -40,6 +40,12 @@ public class Categorizing extends Normalizing {
     }
 
     @Override
+    public Categorizing blockControls() {
+        super.blockControls();
+        return this;
+    }
+
+    @Override
     protected char[] dispatch(final int codepoint) {
         if (codepoint < 0x80) {
             return ASCII[codepoint];
