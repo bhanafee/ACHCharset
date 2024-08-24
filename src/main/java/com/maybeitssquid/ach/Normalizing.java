@@ -25,7 +25,7 @@ public class Normalizing extends ASCIIFilter {
     }
 
     @Override
-    protected final void encode(final int codepoint, final char as) {
+    public Normalizing encode(final int codepoint, final char as) {
         if (codepoint <= 0x0080) {
             super.encode(codepoint, as);
         } else if (as <= 0x0080) {
@@ -33,15 +33,29 @@ public class Normalizing extends ASCIIFilter {
         } else {
             encodings.put(codepoint, new char[]{as});
         }
+        return this;
     }
 
     @Override
-    protected final void encode(final int codepoint, final char[] as) {
+    public Normalizing encode(final int codepoint, final char[] as) {
         if (codepoint <= 0x0080) {
             super.encode(codepoint, as);
         } else {
             encodings.put(codepoint, as);
         }
+        return this;
+    }
+
+    @Override
+    public Normalizing encode(final int codepoint, final String as) {
+        super.encode(codepoint, as);
+        return this;
+    }
+
+    @Override
+    public Normalizing block(final int codepoint) {
+        super.block(codepoint);
+        return this;
     }
 
     @Override

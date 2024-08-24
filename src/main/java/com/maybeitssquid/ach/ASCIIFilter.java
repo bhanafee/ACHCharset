@@ -21,24 +21,35 @@ public class ASCIIFilter implements IntFunction<char[]> {
         }
     }
 
-    protected void encode(final int codepoint, final char as) {
+    public ASCIIFilter encode(final int codepoint, final char as) {
         if (codepoint >= 0x80) {
             throw new IllegalArgumentException("Requested encoding of " + codepoint + ", which exceeds 0x80");
         } else {
             this.ASCII[codepoint] = new char[] {as};
         }
+        return this;
     }
 
-    protected void encode(final int codepoint, final char[] as) {
+    public ASCIIFilter encode(final int codepoint, final char[] as) {
         if (codepoint >= 0x80) {
             throw new IllegalArgumentException("Requested encoding of " + codepoint + ", which exceeds 0x80");
         } else {
             this.ASCII[codepoint] = as;
         }
+        return this;
     }
 
-    protected void encode(final int codepoint, final String as) {
-        encode(codepoint, as.toCharArray());
+    public ASCIIFilter encode(final int codepoint, final String as) {
+        return encode(codepoint, as.toCharArray());
+    }
+
+    public ASCIIFilter block(final int codepoint) {
+        if (codepoint >= 0x80) {
+            throw new IllegalArgumentException("Requested blocking of " + codepoint + ", which exceeds 0x80");
+        } else {
+            this.ASCII[codepoint] = NOTHING;
+        }
+        return this;
     }
 
     protected char[] newLine() {

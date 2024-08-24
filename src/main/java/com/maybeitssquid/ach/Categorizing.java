@@ -16,6 +16,30 @@ public class Categorizing extends Normalizing {
     }
 
     @Override
+    public Categorizing encode(final int codepoint, final char as) {
+        super.encode(codepoint, as);
+        return this;
+    }
+
+    @Override
+    public Categorizing encode(final int codepoint, final char[] as) {
+        super.encode(codepoint, as);
+        return this;
+    }
+
+    @Override
+    public Categorizing encode(final int codepoint, final String as) {
+        super.encode(codepoint, as);
+        return this;
+    }
+
+    @Override
+    public Categorizing block(final int codepoint) {
+        super.block(codepoint);
+        return this;
+    }
+
+    @Override
     protected char[] dispatch(final int codepoint) {
         if (codepoint < 0x80) {
             return ASCII[codepoint];

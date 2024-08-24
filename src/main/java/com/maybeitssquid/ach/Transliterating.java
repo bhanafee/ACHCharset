@@ -82,6 +82,30 @@ public class Transliterating extends Categorizing {
         encode(0xAB67, "tx");
     }
 
+    @Override
+    public Transliterating encode(final int codepoint, final char as) {
+        super.encode(codepoint, as);
+        return this;
+    }
+
+    @Override
+    public Transliterating encode(final int codepoint, final char[] as) {
+        super.encode(codepoint, as);
+        return this;
+    }
+
+    @Override
+    public Transliterating encode(final int codepoint, final String as) {
+        super.encode(codepoint, as);
+        return this;
+    }
+
+    @Override
+    public Categorizing block(final int codepoint) {
+        super.block(codepoint);
+        return this;
+    }
+
     protected char[] byName(final int codepoint) {
         final String name = Character.getName(codepoint);
         if (name.contains("EXCLAMATION MARK")) {
