@@ -8,8 +8,6 @@ import java.util.regex.Pattern;
  */
 public class Naming extends Categorizing {
 
-    private static final int UNICODE_NEL = 0x0085;
-
     private static final Pattern latin = Pattern.compile("LATIN (SMALL |CAPITAL )?LETTER ([A-Z]+ )*(?<letter>\\p{Upper}\\p{Upper}?)\\b");
 
     public Naming() {
@@ -181,14 +179,6 @@ public class Naming extends Categorizing {
 
     protected char[] modifierLetter(final int codepoint) {
         return byName(codepoint);
-    }
-
-    protected char[] control(final int codepoint) {
-        if (codepoint == UNICODE_NEL) {
-            return newLine();
-        } else {
-            return super.control(codepoint);
-        }
     }
 
     protected char[] startPunctuation(final int codepoint) {

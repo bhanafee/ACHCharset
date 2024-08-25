@@ -66,10 +66,6 @@ public class Filtering implements IntFunction<char[]> {
         return this;
     }
 
-    public char[] newLine() {
-        return ASCII['\n'];
-    }
-
     @Override
     public char[] apply(final int value) {
         return value < 0x80 ? ASCII[value] : NOTHING;

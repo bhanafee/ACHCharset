@@ -6,6 +6,8 @@ import static java.lang.Character.*;
 
 public class Categorizing extends Normalizing {
 
+    private static final int UNICODE_NEL = 0x0085;
+
     public static final char UNICODE_REPLACEMENT = '\uFFFD';
 
     @SuppressWarnings("unused")
@@ -45,6 +47,10 @@ public class Categorizing extends Normalizing {
     public Categorizing blockControls() {
         super.blockControls();
         return this;
+    }
+
+    public char[] newLine() {
+        return ASCII['\n'];
     }
 
     @Override
@@ -135,8 +141,8 @@ public class Categorizing extends Normalizing {
         return newLine();
     }
 
-    protected char[] control(@SuppressWarnings("unused") final int codepoint) {
-        return NOTHING;
+    protected char[] control(final int codepoint) {
+        return codepoint == UNICODE_NEL ? newLine() : NOTHING;
     }
 
     protected char[] dashPunctuation(@SuppressWarnings("unused") final int codepoint) {

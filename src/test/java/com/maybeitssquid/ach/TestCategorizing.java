@@ -95,6 +95,16 @@ public class TestCategorizing extends TestNormalizing {
 
     @Test
     @Override
+    public void testLatin1Supplement() {
+        assertEmptyRange(0x0080, 0x0084);
+        assertIs("\n", 0x0085);
+        assertEmptyRange(0x0086, 0x009F);
+        assertIs(" ", 0x00A0);
+        assertEmptyRange(0x00A1, 0x009F);
+    }
+
+    @Test
+    @Override
     public void testHalfWidthAndFullwidth() {
         assertNone(0xFF00);
         for (int cp = 0xFF01; cp <= 0xFF60; cp++) {
