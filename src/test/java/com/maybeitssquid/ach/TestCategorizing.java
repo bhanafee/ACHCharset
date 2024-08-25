@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestCategorizing extends TestNormalizing {
     @BeforeEach
@@ -83,6 +84,13 @@ public class TestCategorizing extends TestNormalizing {
     public void testConnectorPunctuation() {
         final String connector = "_\u005F\u203F\u2040\u2054\uFE33\uFE34\uFE4D\uFE4E\uFE4F\uFF3F";
         assertAll('_', connector.codePoints());
+    }
+
+    @Test
+    @Override
+    public void testOtherPunctuation() {
+        super.testOtherPunctuation();
+        assertIs("?", 0xFFFD);
     }
 
     @Test

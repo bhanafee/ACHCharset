@@ -11,8 +11,6 @@ import java.util.function.IntFunction;
 public class Filtering implements IntFunction<char[]> {
     public static final char[] NOTHING = new char[0];
 
-    public static final char UNICODE_REPLACEMENT = '\uFFFD';
-
     protected final char[][] ASCII = new char[0x80][];
 
     public Filtering() {
@@ -21,6 +19,7 @@ public class Filtering implements IntFunction<char[]> {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Filtering encode(final int codepoint, final char as) {
         if (codepoint >= 0x80) {
             throw new IllegalArgumentException("Requested encoding of " + codepoint + ", which exceeds 0x80");
@@ -30,6 +29,7 @@ public class Filtering implements IntFunction<char[]> {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Filtering encode(final int codepoint, final char[] as) {
         if (codepoint >= 0x80) {
             throw new IllegalArgumentException("Requested encoding of " + codepoint + ", which exceeds 0x80");
@@ -39,6 +39,7 @@ public class Filtering implements IntFunction<char[]> {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Filtering encode(final int codepoint, final String as) {
         return encode(codepoint, as.toCharArray());
     }
@@ -56,6 +57,7 @@ public class Filtering implements IntFunction<char[]> {
      * Shorthand equivalent to invoking {@link #block(int)} on every codepoint from {@code 0x0000} through
      * {@code 0x001F} inclusive, and on {@code 0x7F}.
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Filtering blockControls() {
         for (int i = 0x00; i < 0x20; i++) {
             this.ASCII[i] = NOTHING;
@@ -68,18 +70,8 @@ public class Filtering implements IntFunction<char[]> {
         return ASCII['\n'];
     }
 
-    public char[] replacement() {
-        return ASCII['?'];
-    }
-
     @Override
     public char[] apply(final int value) {
-        if (value < 0x80) {
-            return ASCII[value];
-        } else if (value == UNICODE_REPLACEMENT) {
-            return replacement();
-        } else {
-            return NOTHING;
-        }
+        return value < 0x80 ? ASCII[value] : NOTHING;
     }
 }

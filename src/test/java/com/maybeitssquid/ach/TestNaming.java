@@ -16,13 +16,6 @@ public class TestNaming extends TestCategorizing {
 
     @Test
     @Override
-    public void testReplacement() {
-        super.testReplacement();
-        assertIs("?", 0xFFFD);
-    }
-
-    @Test
-    @Override
     public void testControl() {
         super.testControl();
         assertIs("\n", 0x0085);

@@ -14,14 +14,6 @@ public class TestASCIIFilter extends AbstractEncoderTests {
     }
 
     @Test
-    public void testReplacement() {
-        final char[] replacement = ((Filtering) encoder).replacement();
-        assertNotNull(replacement);
-        assertEquals(1, replacement.length);
-        assertEquals('?', replacement[0]);
-    }
-
-    @Test
     public void testSpaceSeparator() {
         final String spaces = " \u0020";
         assertAll(' ', spaces.codePoints());

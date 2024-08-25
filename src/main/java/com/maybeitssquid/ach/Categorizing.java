@@ -6,6 +6,8 @@ import static java.lang.Character.*;
 
 public class Categorizing extends Normalizing {
 
+    public static final char UNICODE_REPLACEMENT = '\uFFFD';
+
     @SuppressWarnings("unused")
     public Categorizing(final Form form) {
         super(form);
@@ -166,7 +168,7 @@ public class Categorizing extends Normalizing {
     }
 
     protected char[] otherSymbol(final int codepoint) {
-        return NOTHING;
+        return codepoint == UNICODE_REPLACEMENT ? ASCII['?'] : NOTHING;
     }
 
     protected char[] quotePunctuation(@SuppressWarnings("unused") final int codepoint) {

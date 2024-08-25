@@ -226,7 +226,7 @@ public class Naming extends Categorizing {
     }
 
     protected char[] otherSymbol(final int codepoint) {
-        return codepoint == UNICODE_REPLACEMENT ? replacement() : byName(codepoint);
+        return codepoint == UNICODE_REPLACEMENT ? ASCII['?'] : byName(codepoint);
     }
 
     protected char[] quotePunctuation(final int codepoint) {
