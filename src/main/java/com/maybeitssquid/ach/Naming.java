@@ -6,13 +6,13 @@ import java.util.regex.Pattern;
 /**
  * Function to convert a Unicode codepoint into a char[], where all the characters are in the ASCII range 0x00 to 0x7F.
  */
-public class Transliterating extends Categorizing {
+public class Naming extends Categorizing {
 
     private static final int UNICODE_NEL = 0x0085;
 
     private static final Pattern latin = Pattern.compile("LATIN (SMALL |CAPITAL )?LETTER ([A-Z]+ )*(?<letter>\\p{Upper}\\p{Upper}?)\\b");
 
-    public Transliterating() {
+    public Naming() {
         encode(0x00B4, "");
         encode(0x00B7, '.');
         encode(0x00BC, "1/4");
@@ -83,19 +83,19 @@ public class Transliterating extends Categorizing {
     }
 
     @Override
-    public Transliterating encode(final int codepoint, final char as) {
+    public Naming encode(final int codepoint, final char as) {
         super.encode(codepoint, as);
         return this;
     }
 
     @Override
-    public Transliterating encode(final int codepoint, final char[] as) {
+    public Naming encode(final int codepoint, final char[] as) {
         super.encode(codepoint, as);
         return this;
     }
 
     @Override
-    public Transliterating encode(final int codepoint, final String as) {
+    public Naming encode(final int codepoint, final String as) {
         super.encode(codepoint, as);
         return this;
     }
@@ -107,7 +107,7 @@ public class Transliterating extends Categorizing {
     }
 
     @Override
-    public Transliterating blockControls() {
+    public Naming blockControls() {
         super.blockControls();
         return this;
     }

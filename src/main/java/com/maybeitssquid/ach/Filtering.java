@@ -8,20 +8,20 @@ import java.util.function.IntFunction;
  * if the code point is not in the ASCII range. Encodings for specific ASCII values can be overridden by the
  * {@code encode} functions.
  */
-public class ASCIIFilter implements IntFunction<char[]> {
+public class Filtering implements IntFunction<char[]> {
     public static final char[] NOTHING = new char[0];
 
     public static final char UNICODE_REPLACEMENT = '\uFFFD';
 
     protected final char[][] ASCII = new char[0x80][];
 
-    public ASCIIFilter() {
+    public Filtering() {
         for (char cp = 0; cp < 0x80; cp++) {
             ASCII[cp] = new char[]{cp};
         }
     }
 
-    public ASCIIFilter encode(final int codepoint, final char as) {
+    public Filtering encode(final int codepoint, final char as) {
         if (codepoint >= 0x80) {
             throw new IllegalArgumentException("Requested encoding of " + codepoint + ", which exceeds 0x80");
         } else {
@@ -30,7 +30,7 @@ public class ASCIIFilter implements IntFunction<char[]> {
         return this;
     }
 
-    public ASCIIFilter encode(final int codepoint, final char[] as) {
+    public Filtering encode(final int codepoint, final char[] as) {
         if (codepoint >= 0x80) {
             throw new IllegalArgumentException("Requested encoding of " + codepoint + ", which exceeds 0x80");
         } else {
@@ -39,11 +39,11 @@ public class ASCIIFilter implements IntFunction<char[]> {
         return this;
     }
 
-    public ASCIIFilter encode(final int codepoint, final String as) {
+    public Filtering encode(final int codepoint, final String as) {
         return encode(codepoint, as.toCharArray());
     }
 
-    public ASCIIFilter block(final int codepoint) {
+    public Filtering block(final int codepoint) {
         if (codepoint >= 0x80) {
             throw new IllegalArgumentException("Requested blocking of " + codepoint + ", which exceeds 0x80");
         } else {
@@ -56,7 +56,7 @@ public class ASCIIFilter implements IntFunction<char[]> {
      * Shorthand equivalent to invoking {@link #block(int)} on every codepoint from {@code 0x0000} through
      * {@code 0x001F} inclusive, and on {@code 0x7F}.
      */
-    public ASCIIFilter blockControls() {
+    public Filtering blockControls() {
         for (int i = 0x00; i < 0x20; i++) {
             this.ASCII[i] = NOTHING;
         }

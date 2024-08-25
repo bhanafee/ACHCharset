@@ -9,7 +9,7 @@ import java.util.function.IntFunction;
 
 public class TransliteratingEncoder extends CharsetEncoder {
 
-    private final IntFunction<char[]> transliterator = new Transliterating();
+    private final IntFunction<char[]> transliterator = new Naming();
 
     protected TransliteratingEncoder(final Charset cs) {
         super(cs, 1F, 11F, new byte[]{'?'});

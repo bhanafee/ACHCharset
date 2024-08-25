@@ -10,12 +10,12 @@ public class TestASCIIFilter extends AbstractEncoderTests {
 
     @BeforeEach
     protected void setUp() {
-        this.encoder = new ASCIIFilter();
+        this.encoder = new Filtering();
     }
 
     @Test
     public void testReplacement() {
-        final char[] replacement = ((ASCIIFilter) encoder).replacement();
+        final char[] replacement = ((Filtering) encoder).replacement();
         assertNotNull(replacement);
         assertEquals(1, replacement.length);
         assertEquals('?', replacement[0]);

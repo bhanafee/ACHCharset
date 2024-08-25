@@ -7,11 +7,11 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestTransliterating extends TestCategorizing {
+public class TestNaming extends TestCategorizing {
 
     @BeforeEach
     protected void setUp() {
-        this.encoder = new Transliterating();
+        this.encoder = new Naming();
     }
 
     @Test

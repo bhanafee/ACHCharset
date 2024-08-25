@@ -5,7 +5,7 @@ import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Normalizing extends ASCIIFilter {
+public class Normalizing extends Filtering {
 
     private final Map<Integer, char[]> encodings = new HashMap<>();
 
