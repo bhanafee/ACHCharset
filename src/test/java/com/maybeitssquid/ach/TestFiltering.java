@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TestASCIIFilter extends AbstractEncoderTests {
+public class TestFiltering extends AbstractEncoderTests {
 
     @BeforeEach
     protected void setUp() {

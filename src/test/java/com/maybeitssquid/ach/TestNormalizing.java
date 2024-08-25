@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestNormalizing extends TestASCIIFilter {
+public class TestNormalizing extends TestFiltering {
     @BeforeEach
     protected void setUp() {
         this.encoder = new Normalizing();
