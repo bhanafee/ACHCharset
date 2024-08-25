@@ -50,7 +50,7 @@ public class Categorizing extends Normalizing {
     }
 
     public char[] newLine() {
-        return ASCII['\n'];
+        return System.lineSeparator().toCharArray();
     }
 
     @Override
