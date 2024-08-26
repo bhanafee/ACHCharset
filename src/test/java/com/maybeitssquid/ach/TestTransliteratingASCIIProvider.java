@@ -9,7 +9,7 @@ import java.util.Iterator;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTransliteratingASCIIProvider {
-    final String[] canonicals = {"X-ACH", "X-ACH-Newlines", "X-ACH-Aggressive", "X-US-ASCII"};
+    final String[] canonicals = {"X-ACH", "X-ACH-Newlines", "X-ACH-Aggressive", "X-US-ASCII-Transliterating"};
 
     @Test
     public void testCharsets() {

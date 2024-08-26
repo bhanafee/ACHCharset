@@ -19,7 +19,7 @@ import java.util.List;
  *     <dt>X-ACH-Aggressive</dt>
  *     <dd>Decodes the same characters as {@code X-ACH-Newlines} and encodes the same characters with aggressive
  *     transliteration using {@link Naming}.</dd>
- *     <dt>X-US-ASCII-Aggressive</dt>
+ *     <dt>X-US-ASCII-Transliterating</dt>
  *     <dd>Decodes as plain US-ASCII and encodes with aggressive transliteration using {@link Naming}.</dd>
  * </dl>
  */
@@ -64,7 +64,7 @@ public class TransliteratingASCIIProvider extends CharsetProvider {
     private Charset getUSASCIIAggressive() {
         if (usAsciiAggressive == null) {
             Filtering transliterator = new Naming();
-            usAsciiAggressive = new TransliteratingASCII("X-US-ASCII-transliterating", new String[0], transliterator);
+            usAsciiAggressive = new TransliteratingASCII("X-US-ASCII-Transliterating", new String[0], transliterator);
         }
         return usAsciiAggressive;
     }
@@ -88,7 +88,7 @@ public class TransliteratingASCIIProvider extends CharsetProvider {
             case "X-ACH": return getACHFilter();
             case "X-ACH-Newlines": return getACHNewlines();
             case "X-ACH-Aggressive": return getACHAggressive();
-            case "X-US-ASCII": return getUSASCIIAggressive();
+            case "X-US-ASCII-Transliterating": return getUSASCIIAggressive();
         }
         return null;
     }
