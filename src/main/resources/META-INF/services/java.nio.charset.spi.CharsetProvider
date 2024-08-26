@@ -1,1 +1,1 @@
-com.maybeitssquid.ach.ACHCharsetProvider
+com.maybeitssquid.ach.TransliteratingASCIIProvider

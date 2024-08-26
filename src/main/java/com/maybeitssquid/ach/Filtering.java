@@ -62,7 +62,7 @@ public class Filtering implements IntFunction<char[]> {
         for (int i = 0x00; i < 0x20; i++) {
             this.ASCII[i] = NOTHING;
         }
-        this.ASCII[0xFF] = NOTHING;
+        this.ASCII[0x7F] = NOTHING;
         return this;
     }
 

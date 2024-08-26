@@ -27,7 +27,7 @@ public class TestACHCharset {
 
     @BeforeEach
     public void setup() {
-        ACH = new ACHCharset();
+        ACH = new TransliteratingASCIIProvider().charsetForName("X-ACH");
         chars.clear();
         bytes.clear();
     }
@@ -40,7 +40,9 @@ public class TestACHCharset {
         assertFalse(ACH.contains(null));
 
         assertTrue(ACH.contains(ACH));
-        assertTrue(ACH.contains(new ACHCharset()));
+        assertTrue(ACH.contains(Charset.forName("X-ACH")));
+        assertTrue(ACH.contains(Charset.forName("ACH")));
+        assertFalse(ACH.contains(StandardCharsets.US_ASCII));
     }
 
     /** Test the convenience wrapper using the decoder. */
@@ -67,16 +69,16 @@ public class TestACHCharset {
         assertNotNull(output);
 
         assertEquals('A', output.get());
-        assertEquals('\n', output.get());
+        assertEquals(REPLACEMENT, output.get(), "Failed to replace LF");
         assertEquals('B', output.get());
-        assertEquals(REPLACEMENT, output.get());
+        assertEquals(REPLACEMENT, output.get(), "Failed to replace CR");
         assertEquals('C', output.get());
-        assertEquals(REPLACEMENT, output.get());
+        assertEquals(REPLACEMENT, output.get(), "Failed to replace Unicode NEL");
         assertEquals('D', output.get());
-        assertEquals(REPLACEMENT, output.get());
-        assertEquals(REPLACEMENT, output.get());
-        assertEquals(REPLACEMENT, output.get());
-        assertEquals(REPLACEMENT, output.get());
+        assertEquals(REPLACEMENT, output.get(), "Failed to replace control (127)");
+        assertEquals(REPLACEMENT, output.get(), "Failed to replace out of range (-1)");
+        assertEquals(REPLACEMENT, output.get(), "Failed to replace out of range (-2)");
+        assertEquals(REPLACEMENT, output.get(), "Failed to replace out of range (-128)");
         assertEquals('A', output.get());
     }
 
@@ -183,15 +185,15 @@ public class TestACHCharset {
         final ByteBuffer simple = ACH.encode(testInput);
         assertNotNull(simple);
         assertEquals(A, simple.get());
-        assertEquals(0x0A, simple.get(), "Accept LF");
+        assertEquals(REPLACEMENT, simple.get(), "Accepted LF");
         assertEquals(B, simple.get());
-        assertEquals(REPLACEMENT, simple.get());
+        assertEquals(REPLACEMENT, simple.get(), "Accepted CR");
         assertEquals(C, simple.get());
         assertEquals(D, simple.get());
-        assertEquals(REPLACEMENT, simple.get());
-        assertEquals(REPLACEMENT, simple.get());
-        assertEquals(REPLACEMENT, simple.get());
-        assertEquals(REPLACEMENT, simple.get());
+        assertEquals(REPLACEMENT, simple.get(), "Accepted control (0x7F)");
+        assertEquals(REPLACEMENT, simple.get(), "Accepted out of range (0x80)");
+        assertEquals(REPLACEMENT, simple.get(), "Accepted out of range (0x81)");
+        assertEquals(REPLACEMENT, simple.get(), "Accepted out of range (0xFF)");
         assertEquals(A, simple.get());
     }
 
@@ -211,10 +213,6 @@ public class TestACHCharset {
         assertFalse(encoder.canEncode((char) 0x100));
         assertFalse(encoder.canEncode((char) 0x800));
         assertFalse(encoder.canEncode((char) 0xFFFF));
-
-        // Special cases for newlines
-        assertFalse(encoder.canEncode((char) 0x000D), "Cannot encode CR");
-        assertTrue(encoder.canEncode((char) 0x000A), "Can encode LF");
     }
 
     /* Test the encoder directly. */
