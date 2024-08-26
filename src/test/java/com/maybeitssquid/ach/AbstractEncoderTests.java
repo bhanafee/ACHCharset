@@ -1,8 +1,9 @@
 package com.maybeitssquid.ach;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 abstract public class AbstractEncoderTests {
     private final Pattern alphanumeric = Pattern.compile("[a-zA-Z0-9]");
 
-    protected IntFunction<char[]> encoder;
+    protected Filtering encoder;
 
     public void dump(int codepoint) {
         final char[] transliterated = encoder.apply(codepoint);
@@ -86,4 +87,71 @@ abstract public class AbstractEncoderTests {
         }
     }
 
+    private void assertPreflight() {
+        final char[] before = encoder.apply(0x0020);
+        assertNotNull(before);
+        assertEquals(1, before.length);
+        assertEquals(' ', before[0]);
+    }
+
+    private char[] assertPostFlight(final Filtering configured) {
+        assertNotNull(configured);
+
+        assertEquals(encoder.getClass(), configured.getClass());
+        final char[] after = configured.apply(0x0020);
+        assertNotNull(after);
+        return after;
+    }
+
+    @Test
+    public void testEncodeChar() {
+        assertPreflight();
+        final Filtering result = encoder.encode(0x0020, '$');
+        final char[] applied = assertPostFlight(result);
+        assertEquals(1, applied.length);
+        assertEquals('$', applied[0]);
+    }
+
+    @Test
+    public void testEncodeCharArray() {
+        assertPreflight();
+        final Filtering result = encoder.encode(0x0020, new char[] { '$', 'x' });
+        final char[] applied = assertPostFlight(result);
+        assertEquals(2, applied.length);
+        assertEquals('$', applied[0]);
+        assertEquals('x', applied[1]);
+    }
+
+    @Test
+    public void testEncodeString() {
+        assertPreflight();
+        final Filtering result = encoder.encode(0x0020, "$xyz");
+        final char[] applied = assertPostFlight(result);
+        assertEquals(4, applied.length);
+        assertEquals('$', applied[0]);
+        assertEquals('x', applied[1]);
+        assertEquals('y', applied[2]);
+        assertEquals('z', applied[3]);
+    }
+
+    @Test
+    public void testBlock() {
+        assertPreflight();
+        final Filtering result = encoder.block(0x0020);
+        final char[] applied = assertPostFlight(result);
+        assertEquals(0, applied.length);
+    }
+
+    @Test
+    public void testBlockControls() {
+        assertPreflight();
+        final Filtering result = encoder.blockControls();
+        final char[] applied = assertPostFlight(result);
+        assertEquals(1, applied.length);
+        assertEquals(0, result.apply(0x00).length);
+        assertEquals(0, result.apply(0x0A).length);
+        assertEquals(0, result.apply(0x0D).length);
+        assertEquals(0, result.apply(0x1F).length);
+        assertEquals(0, result.apply(0x7F).length);
+    }
 }

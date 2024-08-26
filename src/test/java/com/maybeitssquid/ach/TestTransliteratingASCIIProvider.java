@@ -14,33 +14,40 @@ public class TestTransliteratingASCIIProvider {
     @Test
     public void testCharsets() {
         final CharsetProvider provider = new TransliteratingASCIIProvider();
-        Iterator<Charset> test = provider.charsets();
-        assertNotNull(test);
-        int count = 0;
-        while (test.hasNext()) {
-            final Charset charset = test.next();
-            count += 1;
+        // Perform multiple passes to ensure caching behavior doesn't break anything
+        for (int i = 0; i < 3; i++) {
+            Iterator<Charset> test = provider.charsets();
+            assertNotNull(test);
+            int count = 0;
+            while (test.hasNext()) {
+                final Charset charset = test.next();
+                assertNotNull(charset);
+                count += 1;
+            }
+            assertTrue(count >= 4, "Not enough predefined CharSets");
         }
-        assertTrue(count >= 4, "Not enough predefined CharSets");
     }
 
     @Test
     public void testCharsetForName() {
         final CharsetProvider provider = new TransliteratingASCIIProvider();
+        // Perform multiple passes to ensure caching behavior doesn't break anything
+        for (int i = 0; i < 3; i++) {
 
-        for (final String name: canonicals) {
-            final Charset charset = provider.charsetForName(name);
-            assertNotNull(charset);
-            assertFalse(charset.isRegistered());
-            assertTrue(charset.canEncode());
+            for (final String name : canonicals) {
+                final Charset charset = provider.charsetForName(name);
+                assertNotNull(charset);
+                assertFalse(charset.isRegistered());
+                assertTrue(charset.canEncode());
+            }
+
+            final Charset aliased = provider.charsetForName("ACH");
+            assertNotNull(aliased);
+            assertEquals(Charset.forName("X-ACH"), aliased);
+
+            assertNull(provider.charsetForName(""));
+            assertNull(provider.charsetForName("foo"));
         }
-
-        final Charset aliased = provider.charsetForName("ACH");
-        assertNotNull(aliased);
-        assertEquals(Charset.forName("X-ACH"), aliased);
-
-        assertNull(provider.charsetForName(""));
-        assertNull(provider.charsetForName("foo"));
     }
 
     @Test
