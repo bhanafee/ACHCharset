@@ -221,7 +221,7 @@ public class Naming extends Categorizing {
 
     protected char[] quotePunctuation(final int codepoint) {
         final String name = Character.getName(codepoint);
-        if (name.contains("SINGLE") || name.contains("APOSTROPHE")) {
+        if (name.contains("SINGLE")) {
             return ASCII['\''];
         } else {
             return super.quotePunctuation(codepoint);

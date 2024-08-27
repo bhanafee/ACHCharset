@@ -1,7 +1,5 @@
 package com.maybeitssquid.ach;
 
-import java.text.Normalizer.Form;
-
 import static java.lang.Character.*;
 
 public class Categorizing extends Normalizing {
@@ -9,11 +7,6 @@ public class Categorizing extends Normalizing {
     private static final int UNICODE_NEL = 0x0085;
 
     public static final char UNICODE_REPLACEMENT = '\uFFFD';
-
-    @SuppressWarnings("unused")
-    public Categorizing(final Form form) {
-        super(form);
-    }
 
     public Categorizing() {
         super();

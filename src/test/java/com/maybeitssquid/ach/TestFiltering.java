@@ -3,14 +3,21 @@ package com.maybeitssquid.ach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestFiltering extends AbstractEncoderTests {
 
     @BeforeEach
     protected void setUp() {
         this.encoder = new Filtering();
+    }
+
+    @Test
+    public void testHigh() {
+        assertThrows(IllegalArgumentException.class, super::encodeCharHigh);
+        assertThrows(IllegalArgumentException.class, super::encodeCharArrayHigh);
+        assertThrows(IllegalArgumentException.class, super::encodeStringHigh);
+        assertThrows(IllegalArgumentException.class, super::blockHigh);
     }
 
     @Test
@@ -184,6 +191,12 @@ public class TestFiltering extends AbstractEncoderTests {
     public void testColon() {
         final String keep = ":";
         assertAll(':', keep.codePoints());
+    }
+
+    @Test
+    public void testSemicolon() {
+        final String keep = ";";
+        assertAll(';', keep.codePoints());
     }
 
     @Test

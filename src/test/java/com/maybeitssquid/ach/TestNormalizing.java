@@ -3,12 +3,27 @@ package com.maybeitssquid.ach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.text.Normalizer;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestNormalizing extends TestFiltering {
     @BeforeEach
     protected void setUp() {
         this.encoder = new Normalizing();
+    }
+
+    @Test
+    public void testForm() {
+        assertEquals(Normalizer.Form.NFKD, ((Normalizing) encoder).getForm());
+    }
+
+    @Test
+    public void testHigh() {
+        encodeCharHigh();
+        encodeCharArrayHigh();
+        encodeStringHigh();
+        blockHigh();
     }
 
     @Test

@@ -127,6 +127,7 @@ abstract public class AbstractEncoderTests {
         assertPreflight();
         final Filtering result = encoder.encode(0x0020, "$xyz");
         final char[] applied = assertPostFlight(result);
+        assertNotNull(applied);
         assertEquals(4, applied.length);
         assertEquals('$', applied[0]);
         assertEquals('x', applied[1]);
@@ -139,6 +140,7 @@ abstract public class AbstractEncoderTests {
         assertPreflight();
         final Filtering result = encoder.block(0x0020);
         final char[] applied = assertPostFlight(result);
+        assertNotNull(applied);
         assertEquals(0, applied.length);
     }
 
@@ -153,5 +155,49 @@ abstract public class AbstractEncoderTests {
         assertEquals(0, result.apply(0x0D).length);
         assertEquals(0, result.apply(0x1F).length);
         assertEquals(0, result.apply(0x7F).length);
+    }
+
+    public void encodeCharHigh() {
+        assertPreflight();
+        final Filtering result = encoder.encode(0x00A2, 'C').encode(0x00A3, '\u00A4');
+        final char[] applied = result.apply(0x00A2);
+        assertEquals(1, applied.length);
+        assertEquals('C', applied[0]);
+
+        final char[] higher = result.apply(0x00A3);
+        assertEquals(1, higher.length);
+        assertEquals('\u00A4', higher[0]);
+
+    }
+
+    public void encodeCharArrayHigh() {
+        assertPreflight();
+        final Filtering result = encoder.encode(0x00A2, new char[]{'C', 'e'});
+        final char[] applied = result.apply(0x00A2);
+        assertNotNull(applied);
+        assertEquals(2, applied.length);
+        assertEquals('C', applied[0]);
+        assertEquals('e', applied[1]);
+    }
+
+    public void encodeStringHigh() {
+        assertPreflight();
+        final Filtering result = encoder.encode(0x00A2, "$cent");
+        final char[] applied = result.apply(0x00A2);
+        assertNotNull(applied);
+        assertEquals(5, applied.length);
+        assertEquals('$', applied[0]);
+        assertEquals('c', applied[1]);
+        assertEquals('e', applied[2]);
+        assertEquals('n', applied[3]);
+        assertEquals('t', applied[4]);
+    }
+
+    public void blockHigh() {
+        assertPreflight();
+        final Filtering result = encoder.block(0x00A2);
+        final char[] applied = result.apply(0x00A2);
+        assertNotNull(applied);
+        assertEquals(0, applied.length);
     }
 }

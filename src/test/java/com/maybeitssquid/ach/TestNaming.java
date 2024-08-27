@@ -141,6 +141,13 @@ public class TestNaming extends TestCategorizing {
 
     @Test
     @Override
+    public void testSemicolon() {
+        final String keep = ";\u003B\u061B\u2E35\uFE54\uFF1B";
+        assertAll(';', keep.codePoints());
+    }
+
+    @Test
+    @Override
     public void testExclamationMark() {
         final String exclamation = "!\u00A1\u01C3\u26A0\u2757\u2762\uA71D";
         assertAll('!', exclamation.codePoints());

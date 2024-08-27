@@ -21,6 +21,18 @@ public class TestCategorizing extends TestNormalizing {
         testDecimalDigits(0x1BB0); // Sudanese
         testDecimalDigits(0x0660); // Arabic
         testDecimalDigits(0x10D30); //Hanifi Rohingya
+
+        // 0x0020 Space
+        // 0x00BC Vulgar fraction one quarter
+        // 0x2160 Roman numeral I
+        // 0x216F Roman numeral M
+        // 0x2170 Roman numeral i
+        // 0x217F Roman numeral m
+         for (int cp : new int[] {0x0020, 0x00BC, 0x2A60, 0x2A6F, 0x02A70, 0x2A7F}) {
+            final char[] encoded = ((Categorizing) encoder).decimalDigit(cp);
+            assertEquals(0, encoded.length,
+                    String.format("Encoded %04X as length %d (%s)", cp, encoded.length, new String(encoded)));
+        }
     }
 
     @Test
